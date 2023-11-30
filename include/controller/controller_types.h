@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'controller'.
 //
-// Model version                  : 8.11
+// Model version                  : 8.14
 // Simulink Coder version         : 23.2 (R2023b) 01-Aug-2023
-// C/C++ source code generated on : Wed Nov 15 03:15:22 2023
+// C/C++ source code generated on : Thu Nov 30 13:09:09 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM 10
@@ -26,6 +26,17 @@
 struct SL_Bus_controller_std_msgs_Float64
 {
   real_T Data;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_controller_std_msgs_Bool_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_controller_std_msgs_Bool_
+
+// MsgType=std_msgs/Bool
+struct SL_Bus_controller_std_msgs_Bool
+{
+  boolean_T Data;
 };
 
 #endif

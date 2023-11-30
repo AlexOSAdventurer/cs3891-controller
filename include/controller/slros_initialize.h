@@ -14,6 +14,9 @@ extern SimulinkSubscriber<std_msgs::Float64, SL_Bus_controller_std_msgs_Float64>
 // For Block controller/Subscribe2
 extern SimulinkSubscriber<std_msgs::Float64, SL_Bus_controller_std_msgs_Float64> Sub_controller_58;
 
+// For Block controller/Subscribe3
+extern SimulinkSubscriber<std_msgs::Bool, SL_Bus_controller_std_msgs_Bool> Sub_controller_78;
+
 // For Block controller/Publish
 extern SimulinkPublisher<std_msgs::Float64, SL_Bus_controller_std_msgs_Float64> Pub_controller_38;
 

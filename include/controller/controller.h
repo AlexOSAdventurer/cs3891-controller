@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'controller'.
 //
-// Model version                  : 8.11
+// Model version                  : 8.14
 // Simulink Coder version         : 23.2 (R2023b) 01-Aug-2023
-// C/C++ source code generated on : Wed Nov 15 03:15:22 2023
+// C/C++ source code generated on : Thu Nov 30 13:09:09 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM 10
@@ -148,34 +148,38 @@
 
 // Block signals (default storage)
 struct B_controller_T {
-  real_T Diff;                         // '<S2>/Diff'
-  real_T Gain1;                        // '<Root>/Gain1'
-  real_T Gain;                         // '<Root>/Gain'
-  SL_Bus_controller_std_msgs_Float64 In1;// '<S7>/In1'
-  SL_Bus_controller_std_msgs_Float64 In1_b;// '<S6>/In1'
+  real_T Diff;                         // '<S7>/Diff'
+  real_T Gain1;                        // '<S2>/Gain1'
+  real_T Gain;                         // '<S2>/Gain'
+  real_T Saturation;                   // '<S2>/Saturation'
+  SL_Bus_controller_std_msgs_Float64 In1;// '<S9>/In1'
+  SL_Bus_controller_std_msgs_Float64 In1_b;// '<S8>/In1'
+  SL_Bus_controller_std_msgs_Bool In1_k;// '<S10>/In1'
 };
 
 // Block states (default storage) for system '<Root>'
 struct DW_controller_T {
   ros_slroscpp_internal_block_P_T obj; // '<S3>/SinkBlock'
+  ros_slroscpp_internal_block_S_T obj_c;// '<S6>/SourceBlock'
   ros_slroscpp_internal_block_S_T obj_f;// '<S5>/SourceBlock'
   ros_slroscpp_internal_block_S_T obj_g;// '<S4>/SourceBlock'
-  real_T UD_DSTATE;                    // '<S2>/UD'
+  real_T UD_DSTATE;                    // '<S7>/UD'
+  boolean_T EnabledSubsystem_MODE;     // '<Root>/Enabled Subsystem'
 };
 
 // Continuous states (default storage)
 struct X_controller_T {
-  real_T Integrator_CSTATE;            // '<Root>/Integrator'
+  real_T Integrator_CSTATE;            // '<S2>/Integrator'
 };
 
 // State derivatives (default storage)
 struct XDot_controller_T {
-  real_T Integrator_CSTATE;            // '<Root>/Integrator'
+  real_T Integrator_CSTATE;            // '<S2>/Integrator'
 };
 
 // State disabled
 struct XDis_controller_T {
-  boolean_T Integrator_CSTATE;         // '<Root>/Integrator'
+  boolean_T Integrator_CSTATE;         // '<S2>/Integrator'
 };
 
 #ifndef ODE3_INTG
@@ -193,43 +197,52 @@ struct ODE3_IntgData {
 struct P_controller_T_ {
   real_T DiscreteDerivative_ICPrevScaled;
                               // Mask Parameter: DiscreteDerivative_ICPrevScaled
-                                 //  Referenced by: '<S2>/UD'
+                                 //  Referenced by: '<S7>/UD'
 
-  SL_Bus_controller_std_msgs_Float64 Constant_Value;// Computed Parameter: Constant_Value
-                                                       //  Referenced by: '<S1>/Constant'
+  SL_Bus_controller_std_msgs_Bool Out1_Y0;// Computed Parameter: Out1_Y0
+                                             //  Referenced by: '<S10>/Out1'
 
-  SL_Bus_controller_std_msgs_Float64 Out1_Y0;// Computed Parameter: Out1_Y0
-                                                //  Referenced by: '<S6>/Out1'
+  SL_Bus_controller_std_msgs_Bool Constant_Value;// Computed Parameter: Constant_Value
+                                                    //  Referenced by: '<S6>/Constant'
 
   SL_Bus_controller_std_msgs_Float64 Constant_Value_g;// Computed Parameter: Constant_Value_g
-                                                         //  Referenced by: '<S4>/Constant'
+                                                         //  Referenced by: '<S1>/Constant'
+
+  SL_Bus_controller_std_msgs_Float64 Out1_Y0_i;// Computed Parameter: Out1_Y0_i
+                                                  //  Referenced by: '<S8>/Out1'
+
+  SL_Bus_controller_std_msgs_Float64 Constant_Value_gb;// Computed Parameter: Constant_Value_gb
+                                                          //  Referenced by: '<S4>/Constant'
 
   SL_Bus_controller_std_msgs_Float64 Out1_Y0_n;// Computed Parameter: Out1_Y0_n
-                                                  //  Referenced by: '<S7>/Out1'
+                                                  //  Referenced by: '<S9>/Out1'
 
   SL_Bus_controller_std_msgs_Float64 Constant_Value_j;// Computed Parameter: Constant_Value_j
                                                          //  Referenced by: '<S5>/Constant'
 
+  real_T Out1_Y0_l;                    // Computed Parameter: Out1_Y0_l
+                                          //  Referenced by: '<S2>/Out1'
+
   real_T Gain2_Gain;                   // Expression: 0
-                                          //  Referenced by: '<Root>/Gain2'
+                                          //  Referenced by: '<S2>/Gain2'
 
   real_T TSamp_WtEt;                   // Computed Parameter: TSamp_WtEt
-                                          //  Referenced by: '<S2>/TSamp'
-
-  real_T Integrator_IC;                // Expression: 0
-                                          //  Referenced by: '<Root>/Integrator'
+                                          //  Referenced by: '<S7>/TSamp'
 
   real_T Gain1_Gain;                   // Expression: 0.8
-                                          //  Referenced by: '<Root>/Gain1'
+                                          //  Referenced by: '<S2>/Gain1'
+
+  real_T Integrator_IC;                // Expression: 0
+                                          //  Referenced by: '<S2>/Integrator'
 
   real_T Saturation_UpperSat;          // Expression: 1.5
-                                          //  Referenced by: '<Root>/Saturation'
+                                          //  Referenced by: '<S2>/Saturation'
 
   real_T Saturation_LowerSat;          // Expression: -3
-                                          //  Referenced by: '<Root>/Saturation'
+                                          //  Referenced by: '<S2>/Saturation'
 
   real_T Gain_Gain;                    // Expression: 0
-                                          //  Referenced by: '<Root>/Gain'
+                                          //  Referenced by: '<S2>/Gain'
 
   uint8_T ManualSwitch_CurrentSetting;
                               // Computed Parameter: ManualSwitch_CurrentSetting
@@ -367,7 +380,8 @@ extern volatile boolean_T runModel;
 //-
 //  These blocks were eliminated from the model due to optimizations:
 //
-//  Block '<S2>/Data Type Duplicate' : Unused code path elimination
+//  Block '<S7>/Data Type Duplicate' : Unused code path elimination
+//  Block '<Root>/Scope' : Unused code path elimination
 
 
 //-
@@ -386,12 +400,15 @@ extern volatile boolean_T runModel;
 //
 //  '<Root>' : 'controller'
 //  '<S1>'   : 'controller/Blank Message'
-//  '<S2>'   : 'controller/Discrete Derivative'
+//  '<S2>'   : 'controller/Enabled Subsystem'
 //  '<S3>'   : 'controller/Publish'
 //  '<S4>'   : 'controller/Subscribe1'
 //  '<S5>'   : 'controller/Subscribe2'
-//  '<S6>'   : 'controller/Subscribe1/Enabled Subsystem'
-//  '<S7>'   : 'controller/Subscribe2/Enabled Subsystem'
+//  '<S6>'   : 'controller/Subscribe3'
+//  '<S7>'   : 'controller/Enabled Subsystem/Discrete Derivative'
+//  '<S8>'   : 'controller/Subscribe1/Enabled Subsystem'
+//  '<S9>'   : 'controller/Subscribe2/Enabled Subsystem'
+//  '<S10>'  : 'controller/Subscribe3/Enabled Subsystem'
 
 #endif                                 // RTW_HEADER_controller_h_
 

@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'controller'.
 //
-// Model version                  : 8.11
+// Model version                  : 8.14
 // Simulink Coder version         : 23.2 (R2023b) 01-Aug-2023
-// C/C++ source code generated on : Wed Nov 15 03:15:22 2023
+// C/C++ source code generated on : Thu Nov 30 13:09:09 2023
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM 10
@@ -134,10 +134,12 @@ void controller_step(void)
 {
   // local block i/o variables
   real_T rtb_TSamp;
+  SL_Bus_controller_std_msgs_Bool b_varargout_2_0;
   SL_Bus_controller_std_msgs_Float64 b_varargout_2;
   SL_Bus_controller_std_msgs_Float64 rtb_BusAssignment;
+  real_T rtb_Data;
+  real_T rtb_Data_f;
   real_T rtb_Sum;
-  real_T u0;
   boolean_T b_varargout_1;
   if (rtmIsMajorTimeStep(controller_M)) {
     // set solver stop time
@@ -157,11 +159,11 @@ void controller_step(void)
     b_varargout_1 = Sub_controller_58.getLatestMessage(&b_varargout_2);
 
     // Outputs for Enabled SubSystem: '<S5>/Enabled Subsystem' incorporates:
-    //   EnablePort: '<S7>/Enable'
+    //   EnablePort: '<S9>/Enable'
 
     // Start for MATLABSystem: '<S5>/SourceBlock'
     if (b_varargout_1) {
-      // SignalConversion generated from: '<S7>/In1'
+      // SignalConversion generated from: '<S9>/In1'
       controller_B.In1 = b_varargout_2;
     }
 
@@ -169,16 +171,27 @@ void controller_step(void)
     // End of Outputs for SubSystem: '<S5>/Enabled Subsystem'
     // End of Outputs for SubSystem: '<Root>/Subscribe2'
 
+    // ManualSwitch: '<Root>/Manual Switch'
+    if (controller_P.ManualSwitch_CurrentSetting == 1) {
+      // SignalConversion generated from: '<Root>/Bus Selector1'
+      rtb_Data = 0.0;
+    } else {
+      // SignalConversion generated from: '<Root>/Bus Selector1'
+      rtb_Data = controller_B.In1.Data;
+    }
+
+    // End of ManualSwitch: '<Root>/Manual Switch'
+
     // Outputs for Atomic SubSystem: '<Root>/Subscribe1'
     // MATLABSystem: '<S4>/SourceBlock'
     b_varargout_1 = Sub_controller_36.getLatestMessage(&b_varargout_2);
 
     // Outputs for Enabled SubSystem: '<S4>/Enabled Subsystem' incorporates:
-    //   EnablePort: '<S6>/Enable'
+    //   EnablePort: '<S8>/Enable'
 
     // Start for MATLABSystem: '<S4>/SourceBlock'
     if (b_varargout_1) {
-      // SignalConversion generated from: '<S6>/In1'
+      // SignalConversion generated from: '<S8>/In1'
       controller_B.In1_b = b_varargout_2;
     }
 
@@ -188,67 +201,121 @@ void controller_step(void)
 
     // ManualSwitch: '<Root>/Manual Switch1'
     if (controller_P.ManualSwitch1_CurrentSetting == 1) {
-      rtb_Sum = 0.0;
+      // SignalConversion generated from: '<Root>/Bus Selector'
+      rtb_Data_f = 0.0;
     } else {
-      rtb_Sum = controller_B.In1_b.Data;
+      // SignalConversion generated from: '<Root>/Bus Selector'
+      rtb_Data_f = controller_B.In1_b.Data;
     }
 
-    // ManualSwitch: '<Root>/Manual Switch'
-    if (controller_P.ManualSwitch_CurrentSetting == 1) {
-      u0 = 0.0;
-    } else {
-      u0 = controller_B.In1.Data;
+    // End of ManualSwitch: '<Root>/Manual Switch1'
+
+    // Outputs for Atomic SubSystem: '<Root>/Subscribe3'
+    // MATLABSystem: '<S6>/SourceBlock'
+    b_varargout_1 = Sub_controller_78.getLatestMessage(&b_varargout_2_0);
+
+    // Outputs for Enabled SubSystem: '<S6>/Enabled Subsystem' incorporates:
+    //   EnablePort: '<S10>/Enable'
+
+    // Start for MATLABSystem: '<S6>/SourceBlock'
+    if (b_varargout_1) {
+      // SignalConversion generated from: '<S10>/In1'
+      controller_B.In1_k = b_varargout_2_0;
     }
 
-    // Sum: '<Root>/Sum' incorporates:
-    //   ManualSwitch: '<Root>/Manual Switch'
-    //   ManualSwitch: '<Root>/Manual Switch1'
+    // End of Start for MATLABSystem: '<S6>/SourceBlock'
+    // End of Outputs for SubSystem: '<S6>/Enabled Subsystem'
+    // End of Outputs for SubSystem: '<Root>/Subscribe3'
 
-    rtb_Sum -= u0;
+    // Outputs for Enabled SubSystem: '<Root>/Enabled Subsystem' incorporates:
+    //   EnablePort: '<S2>/Enable'
 
-    // SampleTimeMath: '<S2>/TSamp' incorporates:
-    //   Gain: '<Root>/Gain2'
-    //
-    //  About '<S2>/TSamp':
-    //   y = u * K where K = 1 / ( w * Ts )
+    if (rtsiIsModeUpdateTimeStep(&controller_M->solverInfo)) {
+      if (controller_B.In1_k.Data) {
+        if (!controller_DW.EnabledSubsystem_MODE) {
+          (void) std::memset(&(controller_XDis.Integrator_CSTATE), 0,
+                             1*sizeof(boolean_T));
+          controller_DW.EnabledSubsystem_MODE = true;
+        }
+      } else {
+        if (((controller_M->Timing.clockTick1) * 0.05) == rtmGetTStart
+            (controller_M)) {
+          (void) std::memset(&(controller_XDis.Integrator_CSTATE), 1,
+                             1*sizeof(boolean_T));
+        }
 
-    rtb_TSamp = controller_P.Gain2_Gain * rtb_Sum * controller_P.TSamp_WtEt;
+        if (controller_DW.EnabledSubsystem_MODE) {
+          (void) std::memset(&(controller_XDis.Integrator_CSTATE), 1,
+                             1*sizeof(boolean_T));
+          controller_DW.EnabledSubsystem_MODE = false;
+        }
+      }
+    }
 
-    // Sum: '<S2>/Diff' incorporates:
-    //   UnitDelay: '<S2>/UD'
-    //
-    //  Block description for '<S2>/Diff':
-    //
-    //   Add in CPU
-    //
-    //  Block description for '<S2>/UD':
-    //
-    //   Store in Global RAM
-
-    controller_B.Diff = rtb_TSamp - controller_DW.UD_DSTATE;
-
-    // Gain: '<Root>/Gain1'
-    controller_B.Gain1 = controller_P.Gain1_Gain * rtb_Sum;
+    // End of Outputs for SubSystem: '<Root>/Enabled Subsystem'
   }
 
-  // Sum: '<Root>/Sum1' incorporates:
-  //   Integrator: '<Root>/Integrator'
+  // Outputs for Enabled SubSystem: '<Root>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S2>/Enable'
 
-  u0 = (controller_B.Diff + controller_X.Integrator_CSTATE) + controller_B.Gain1;
+  if (controller_DW.EnabledSubsystem_MODE) {
+    if (rtmIsMajorTimeStep(controller_M)) {
+      // Sum: '<S2>/Sum'
+      rtb_Sum = rtb_Data_f - rtb_Data;
 
-  // Saturate: '<Root>/Saturation'
-  if (u0 > controller_P.Saturation_UpperSat) {
-    // BusAssignment: '<Root>/Bus Assignment'
-    rtb_BusAssignment.Data = controller_P.Saturation_UpperSat;
-  } else if (u0 < controller_P.Saturation_LowerSat) {
-    // BusAssignment: '<Root>/Bus Assignment'
-    rtb_BusAssignment.Data = controller_P.Saturation_LowerSat;
-  } else {
-    // BusAssignment: '<Root>/Bus Assignment'
-    rtb_BusAssignment.Data = u0;
+      // SampleTimeMath: '<S7>/TSamp' incorporates:
+      //   Gain: '<S2>/Gain2'
+      //
+      //  About '<S7>/TSamp':
+      //   y = u * K where K = 1 / ( w * Ts )
+
+      rtb_TSamp = controller_P.Gain2_Gain * rtb_Sum * controller_P.TSamp_WtEt;
+
+      // Sum: '<S7>/Diff' incorporates:
+      //   UnitDelay: '<S7>/UD'
+      //
+      //  Block description for '<S7>/Diff':
+      //
+      //   Add in CPU
+      //
+      //  Block description for '<S7>/UD':
+      //
+      //   Store in Global RAM
+
+      controller_B.Diff = rtb_TSamp - controller_DW.UD_DSTATE;
+
+      // Gain: '<S2>/Gain1'
+      controller_B.Gain1 = controller_P.Gain1_Gain * rtb_Sum;
+    }
+
+    // Saturate: '<S2>/Saturation' incorporates:
+    //   Integrator: '<S2>/Integrator'
+    //   Sum: '<S2>/Sum1'
+
+    controller_B.Saturation = controller_X.Integrator_CSTATE;
+    controller_B.Saturation = (controller_B.Diff + controller_B.Saturation) +
+      controller_B.Gain1;
+
+    // Saturate: '<S2>/Saturation'
+    if (controller_B.Saturation > controller_P.Saturation_UpperSat) {
+      // Saturate: '<S2>/Saturation'
+      controller_B.Saturation = controller_P.Saturation_UpperSat;
+    } else if (controller_B.Saturation < controller_P.Saturation_LowerSat) {
+      // Saturate: '<S2>/Saturation'
+      controller_B.Saturation = controller_P.Saturation_LowerSat;
+    }
+
+    // End of Saturate: '<S2>/Saturation'
+    if (rtmIsMajorTimeStep(controller_M)) {
+      // Gain: '<S2>/Gain'
+      controller_B.Gain = controller_P.Gain_Gain * rtb_Sum;
+    }
   }
 
-  // End of Saturate: '<Root>/Saturation'
+  // End of Outputs for SubSystem: '<Root>/Enabled Subsystem'
+
+  // BusAssignment: '<Root>/Bus Assignment'
+  rtb_BusAssignment.Data = controller_B.Saturation;
 
   // Outputs for Atomic SubSystem: '<Root>/Publish'
   // MATLABSystem: '<S3>/SinkBlock'
@@ -256,20 +323,21 @@ void controller_step(void)
 
   // End of Outputs for SubSystem: '<Root>/Publish'
   if (rtmIsMajorTimeStep(controller_M)) {
-    // Gain: '<Root>/Gain'
-    controller_B.Gain = controller_P.Gain_Gain * rtb_Sum;
-  }
+    // Update for Enabled SubSystem: '<Root>/Enabled Subsystem' incorporates:
+    //   EnablePort: '<S2>/Enable'
 
-  if (rtmIsMajorTimeStep(controller_M)) {
-    if (rtmIsMajorTimeStep(controller_M)) {
-      // Update for UnitDelay: '<S2>/UD'
+    if (controller_DW.EnabledSubsystem_MODE && rtmIsMajorTimeStep(controller_M))
+    {
+      // Update for UnitDelay: '<S7>/UD'
       //
-      //  Block description for '<S2>/UD':
+      //  Block description for '<S7>/UD':
       //
       //   Store in Global RAM
 
       controller_DW.UD_DSTATE = rtb_TSamp;
     }
+
+    // End of Update for SubSystem: '<Root>/Enabled Subsystem'
   }                                    // end MajorTimeStep
 
   if (rtmIsMajorTimeStep(controller_M)) {
@@ -302,8 +370,15 @@ void controller_derivatives(void)
   XDot_controller_T *_rtXdot;
   _rtXdot = ((XDot_controller_T *) controller_M->derivs);
 
-  // Derivatives for Integrator: '<Root>/Integrator'
-  _rtXdot->Integrator_CSTATE = controller_B.Gain;
+  // Derivatives for Enabled SubSystem: '<Root>/Enabled Subsystem'
+  if (controller_DW.EnabledSubsystem_MODE) {
+    // Derivatives for Integrator: '<S2>/Integrator'
+    _rtXdot->Integrator_CSTATE = controller_B.Gain;
+  } else {
+    ((XDot_controller_T *) controller_M->derivs)->Integrator_CSTATE = 0.0;
+  }
+
+  // End of Derivatives for SubSystem: '<Root>/Enabled Subsystem'
 }
 
 // Model initialize function
@@ -351,31 +426,23 @@ void controller_initialize(void)
   controller_M->Timing.stepSize0 = 0.05;
 
   {
-    static const char_T b_zeroDelimTopic_1[17]{ "/car/state/vel_x" };
+    static const char_T b_zeroDelimTopic_2[17]{ "/car/state/vel_x" };
 
-    static const char_T b_zeroDelimTopic_2[11]{ "/pilot_vel" };
+    static const char_T b_zeroDelimTopic_4[16]{ "/control_active" };
 
-    static const char_T b_zeroDelimTopic_3[11]{ "/cmd_accel" };
+    static const char_T b_zeroDelimTopic_3[11]{ "/pilot_vel" };
+
+    static const char_T b_zeroDelimTopic_5[11]{ "/cmd_accel" };
 
     int32_T i;
     char_T b_zeroDelimTopic[17];
+    char_T b_zeroDelimTopic_1[16];
     char_T b_zeroDelimTopic_0[11];
-
-    // InitializeConditions for UnitDelay: '<S2>/UD'
-    //
-    //  Block description for '<S2>/UD':
-    //
-    //   Store in Global RAM
-
-    controller_DW.UD_DSTATE = controller_P.DiscreteDerivative_ICPrevScaled;
-
-    // InitializeConditions for Integrator: '<Root>/Integrator'
-    controller_X.Integrator_CSTATE = controller_P.Integrator_IC;
 
     // SystemInitialize for Atomic SubSystem: '<Root>/Subscribe2'
     // SystemInitialize for Enabled SubSystem: '<S5>/Enabled Subsystem'
-    // SystemInitialize for SignalConversion generated from: '<S7>/In1' incorporates:
-    //   Outport: '<S7>/Out1'
+    // SystemInitialize for SignalConversion generated from: '<S9>/In1' incorporates:
+    //   Outport: '<S9>/Out1'
 
     controller_B.In1 = controller_P.Out1_Y0_n;
 
@@ -385,7 +452,7 @@ void controller_initialize(void)
     controller_DW.obj_f.matlabCodegenIsDeleted = false;
     controller_DW.obj_f.isInitialized = 1;
     for (i = 0; i < 17; i++) {
-      b_zeroDelimTopic[i] = b_zeroDelimTopic_1[i];
+      b_zeroDelimTopic[i] = b_zeroDelimTopic_2[i];
     }
 
     Sub_controller_58.createSubscriber(&b_zeroDelimTopic[0], 1);
@@ -396,10 +463,10 @@ void controller_initialize(void)
 
     // SystemInitialize for Atomic SubSystem: '<Root>/Subscribe1'
     // SystemInitialize for Enabled SubSystem: '<S4>/Enabled Subsystem'
-    // SystemInitialize for SignalConversion generated from: '<S6>/In1' incorporates:
-    //   Outport: '<S6>/Out1'
+    // SystemInitialize for SignalConversion generated from: '<S8>/In1' incorporates:
+    //   Outport: '<S8>/Out1'
 
-    controller_B.In1_b = controller_P.Out1_Y0;
+    controller_B.In1_b = controller_P.Out1_Y0_i;
 
     // End of SystemInitialize for SubSystem: '<S4>/Enabled Subsystem'
 
@@ -407,7 +474,7 @@ void controller_initialize(void)
     controller_DW.obj_g.matlabCodegenIsDeleted = false;
     controller_DW.obj_g.isInitialized = 1;
     for (i = 0; i < 11; i++) {
-      b_zeroDelimTopic_0[i] = b_zeroDelimTopic_2[i];
+      b_zeroDelimTopic_0[i] = b_zeroDelimTopic_3[i];
     }
 
     Sub_controller_36.createSubscriber(&b_zeroDelimTopic_0[0], 1);
@@ -416,12 +483,53 @@ void controller_initialize(void)
     // End of Start for MATLABSystem: '<S4>/SourceBlock'
     // End of SystemInitialize for SubSystem: '<Root>/Subscribe1'
 
+    // SystemInitialize for Atomic SubSystem: '<Root>/Subscribe3'
+    // SystemInitialize for Enabled SubSystem: '<S6>/Enabled Subsystem'
+    // SystemInitialize for SignalConversion generated from: '<S10>/In1' incorporates:
+    //   Outport: '<S10>/Out1'
+
+    controller_B.In1_k = controller_P.Out1_Y0;
+
+    // End of SystemInitialize for SubSystem: '<S6>/Enabled Subsystem'
+
+    // Start for MATLABSystem: '<S6>/SourceBlock'
+    controller_DW.obj_c.matlabCodegenIsDeleted = false;
+    controller_DW.obj_c.isInitialized = 1;
+    for (i = 0; i < 16; i++) {
+      b_zeroDelimTopic_1[i] = b_zeroDelimTopic_4[i];
+    }
+
+    Sub_controller_78.createSubscriber(&b_zeroDelimTopic_1[0], 1);
+    controller_DW.obj_c.isSetupComplete = true;
+
+    // End of Start for MATLABSystem: '<S6>/SourceBlock'
+    // End of SystemInitialize for SubSystem: '<Root>/Subscribe3'
+
+    // SystemInitialize for Enabled SubSystem: '<Root>/Enabled Subsystem'
+    // InitializeConditions for UnitDelay: '<S7>/UD'
+    //
+    //  Block description for '<S7>/UD':
+    //
+    //   Store in Global RAM
+
+    controller_DW.UD_DSTATE = controller_P.DiscreteDerivative_ICPrevScaled;
+
+    // InitializeConditions for Integrator: '<S2>/Integrator'
+    controller_X.Integrator_CSTATE = controller_P.Integrator_IC;
+
+    // SystemInitialize for Saturate: '<S2>/Saturation' incorporates:
+    //   Outport: '<S2>/Out1'
+
+    controller_B.Saturation = controller_P.Out1_Y0_l;
+
+    // End of SystemInitialize for SubSystem: '<Root>/Enabled Subsystem'
+
     // SystemInitialize for Atomic SubSystem: '<Root>/Publish'
     // Start for MATLABSystem: '<S3>/SinkBlock'
     controller_DW.obj.matlabCodegenIsDeleted = false;
     controller_DW.obj.isInitialized = 1;
     for (i = 0; i < 11; i++) {
-      b_zeroDelimTopic_0[i] = b_zeroDelimTopic_3[i];
+      b_zeroDelimTopic_0[i] = b_zeroDelimTopic_5[i];
     }
 
     Pub_controller_38.createPublisher(&b_zeroDelimTopic_0[0], 1);
@@ -452,6 +560,15 @@ void controller_terminate(void)
 
   // End of Terminate for MATLABSystem: '<S4>/SourceBlock'
   // End of Terminate for SubSystem: '<Root>/Subscribe1'
+
+  // Terminate for Atomic SubSystem: '<Root>/Subscribe3'
+  // Terminate for MATLABSystem: '<S6>/SourceBlock'
+  if (!controller_DW.obj_c.matlabCodegenIsDeleted) {
+    controller_DW.obj_c.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S6>/SourceBlock'
+  // End of Terminate for SubSystem: '<Root>/Subscribe3'
 
   // Terminate for Atomic SubSystem: '<Root>/Publish'
   // Terminate for MATLABSystem: '<S3>/SinkBlock'

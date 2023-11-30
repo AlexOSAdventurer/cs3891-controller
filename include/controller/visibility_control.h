@@ -28,5 +28,5 @@
   #define CONTROLLER_PUBLIC_TYPE
 #endif
 #endif  // CONTROLLER__VISIBILITY_CONTROL_H_
-// Generated 15-Nov-2023 03:15:28
+// Generated 30-Nov-2023 13:09:18
 // Copyright 2019-2020 The MathWorks, Inc.
